@@ -1,10 +1,10 @@
 # zeotap
-Weather Forecast & Rule Engine with AST
+Weather Forecast & Rule Engine with Abstract Syntax Tree (AST)
 Overview
-This repository contains two main applications:
+This repository encompasses two distinct applications:
 
-Weather Forecast API: A simple weather forecasting API that retrieves real-time weather data using the OpenWeather API.
-3-Tier Rule Engine with AST: A rule engine that determines user eligibility based on attributes like age, department, income, etc. It uses an Abstract Syntax Tree (AST) to dynamically create, combine, and evaluate conditional rules.
+Weather Forecast API: A service that fetches real-time weather data utilizing the OpenWeather API.
+3-Tier Rule Engine with AST: A dynamic rule engine that evaluates user eligibility based on specific attributes, such as age, department, income, and more. This system employs an Abstract Syntax Tree (AST) to construct, combine, and evaluate rules.
 Table of Contents
 Weather Forecast API
 Setup
@@ -15,120 +15,40 @@ Database Setup
 API Endpoints
 Usage
 Testing
-License
 Weather Forecast API
 Setup
-Clone the repository:
+Repository Clone: Clone the repository and navigate into the project directory.
 
-bash
-git clone https://github.com/yourusername/your-repo.git
-cd your-repo
-Install dependencies: The weather API uses Flask and requests. Install them using:
+Dependencies Installation: Install the necessary dependencies, ensuring you have the correct versions of Flask and any other required packages.
 
-bash
+API Key Configuration: Obtain an API key from OpenWeather and store it securely in the project environment to ensure secure access to the weather API.
 
-pip install flask requests
-Configure API Key: You'll need an API key from OpenWeather. After signing up and generating an API key, create a .env file in the project root and add your key:
+Application Execution: Execute the application locally to initiate the weather forecasting service.
 
-bash
- 
-OPENWEATHER_API_KEY=your_api_key_here
-Run the application:
-
-bash
-python weather_app.py
 Usage
-Get Weather Data: You can retrieve the weather forecast for a specific city by making a GET request to the /weather endpoint. Example:
-
-bash
-curl "http://127.0.0.1:5000/weather?city=London"
-The response will provide real-time weather data for the requested city.
+To retrieve weather data for a specific location, users can make a GET request to the designated endpoint. The weather data returned will reflect real-time conditions for the queried city.
 
 3-Tier Rule Engine with AST
-This part of the project determines user eligibility based on attributes such as age, department, income, etc., using dynamically created rules. The system represents these rules using an Abstract Syntax Tree (AST).
+This component evaluates user eligibility by processing dynamic conditional rules. The rules, represented using an Abstract Syntax Tree (AST), can be created, combined, and evaluated in real-time.
 
 Project Structure
-bash
-rule-engine/
-├── app.py                # Flask app to expose API endpoints
-├── rule_engine.py        # Core logic for AST, rule creation, combination, and evaluation
-├── db_setup.py           # Script for setting up the SQLite database
-├── requirements.txt      # Dependencies for the project
-└── database.db           # SQLite database (generated after running db_setup.py)
+The rule engine component comprises several key files, including the core logic for rule creation and evaluation, the database setup script, and the Flask application exposing API endpoints. These components work together to provide a flexible and scalable rule-based system.
+
 Database Setup
-The project uses SQLite to store the rule metadata. You can set up the database by running:
+The system leverages SQLite for storing rule metadata. Users can initialize the database using a provided script, which creates a table to store the rule definitions.
 
-bash
-python db_setup.py
-This will create a rules table in the database.db file with the following schema:
-
-sql
-CREATE TABLE IF NOT EXISTS rules (
-    rule_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    rule_string TEXT NOT NULL
-);
 API Endpoints
-Create Rule
+The application provides several key endpoints:
 
-URL: /create_rule
-Method: POST
-Payload:
-json
- 
-{
-  "rule_string": "age > 30 AND department = 'Sales'"
-}
-Response: The created rule's AST.
-Evaluate Rule
+Create Rule: This endpoint allows users to define new rules, which are represented and stored as ASTs.
 
-URL: /evaluate_rule
-Method: POST
-Payload:
-json
- 
-{
-  "rule_ast": { "type": "operator", "left": ..., "right": ..., "value": "AND" },
-  "data": { "age": 35, "department": "Sales", "salary": 60000, "experience": 3 }
-}
-Response: Returns True or False based on the rule evaluation.
-Combine Rules
+Evaluate Rule: This endpoint evaluates a rule against user data to determine if the conditions are met.
 
-URL: /combine_rules
-Method: POST
-Payload:
-json
-{
-  "rules": [
-    "age > 30 AND department = 'Sales'",
-    "age < 25 AND department = 'Marketing'"
-  ],
-  "operator": "AND"
-}
-Response: The combined rule AST.
+Combine Rules: This functionality enables the combination of multiple rules using logical operators, such as AND or OR, to create more complex rule structures.
+
 Usage
-Install dependencies: Install the necessary dependencies using:
+To use the rule engine, users can submit rule definitions and evaluate them against provided user data. The system dynamically constructs and processes AST representations of these rules, ensuring flexibility and precision in rule evaluation.
 
-bash
-pip install -r requirements.txt
-Run the application: To start the Flask API, run:
+Testing
+Users can interact with the API via tools such as Postman or curl, allowing them to define rules, evaluate conditions, and test the system's response to various datasets.
 
-bash
-python app.py
-Testing the Endpoints: Use tools like Postman or curl to test the API. Below are a few sample commands:
-
-Create Rule:
-
-bash
-curl -X POST http://127.0.0.1:5000/create_rule \
-     -H "Content-Type: application/json" \
-     -d '{"rule_string": "age > 30 AND department = '\''Sales'\''"}'
-Evaluate Rule: Once a rule has been created, evaluate it using:
-
-bash
- 
-curl -X POST http://127.0.0.1:5000/evaluate_rule \
-     -H "Content-Type: application/json" \
-     -d '{
-           "rule_ast": { "type": "operator", "left": ..., "right": ..., "value": "AND" },
-           "data": { "age": 35, "department": "Sales", "salary": 60000, "experience": 3 }
-         }'
